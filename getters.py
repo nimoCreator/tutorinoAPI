@@ -31,7 +31,11 @@ def get_korepetytor_profile(user_id: int):
             cursor.execute(f"SELECT * FROM korepetytor WHERE uuid = {user_id}")
             korepetytor_data = cursor.fetchone()
             if korepetytor_data:
-                return korepetytor_data
+                cursor.execute(f"SELECT * FROM ogloszenia WHERE kuid = {korepetytor_data[0]}")
+                korepetytor_ogloszenia = cursor.fetchall()
+                cursor.execute(f"SELECT * FROM rating WHERE recipient = {korepetytor_data[0]}")
+                oceny_korepetytora = cursor.fetchall()
+                return korepetytor_data, korepetytor_ogloszenia, oceny_korepetytora
             else:
                 raise HTTPException(status_code=404, detail="Korepetytor not found")
     except Exception as e:
@@ -41,6 +45,7 @@ def get_konwersacja(user_id: int):
     try:
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT * FROM konwersacje WHERE owner = {user_id}")
+
             konwersacja_data = cursor.fetchall()
             return konwersacja_data
     except Exception as e:
@@ -101,10 +106,6 @@ def create_user_account(login: str, email: str, password: str):
             return {"message": "User account created successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/items")
-def create_item():
-    return "Hello"
 
 @app.post("/login")
 def login(item: Item):
@@ -198,7 +199,6 @@ async def get_korepetytor_korepetycje(user_id: int):
 @app.get("/korepetycje_u/{user_id}")
 async def get_uczen_korepetycje(user_id: int):
     return get_korepetycje_by_uczen(user_id)
-
 
 @app.on_event("shutdown")
 async def shutdown_event():
