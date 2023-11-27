@@ -1,14 +1,13 @@
 import requests
 
-url2 = "http://127.0.0.1:8000/items"
+url2 = "http://127.0.0.1:8000/login"
 
 data_logowanie = {
-    "login_or_email": "John12",
-    "password": "ZaQ1@wSx"
+    "login_or_email":"John12",
+    "password":"ZaQ1@wSx"
 }
 
 response2 = requests.post(url2, json=data_logowanie)
-
 
 if response2.status_code == 200:
     print("Response:", response2.json())
