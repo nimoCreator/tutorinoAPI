@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 import pymysql
 from pydantic import BaseModel
+from datetime import date, timedelta
+import random
 
 class Item(BaseModel):
     login_or_email: str
@@ -97,6 +99,15 @@ def validate_login_credentials(login: str, password: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+def validate_session_inbase(id: str):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM sessions WHERE sessionid = %s", (id))
+            result = cursor.fetchone()
+            return result is not None
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 def create_user_account(login: str, email: str, password: str):
     try:
@@ -106,6 +117,21 @@ def create_user_account(login: str, email: str, password: str):
             return {"message": "User account created successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+   
+def add_new_session(userID: str):
+    try:
+        with connection.cursor() as cursor:
+            valid_from = str(date.today())
+            today = date.today()
+            td = timedelta(days=1)
+            valid_until = str(today + td)
+            sessionId = str(random.randint(10000000000,99999999999))
+            cursor.execute("INSERT INTO sessions (sessionId, user_uuid, valid_from, valid_until, session_key) VALUES (%s, %s, %s, %s)", (sessionId, userID, valid_from, valid_until))
+            connection.commit()
+            return {"sessionId":sessionId}
+    except pymysql.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/login")
 def login(item: Item):
@@ -123,6 +149,22 @@ def register(login: str, email: str, password: str):
         raise HTTPException(status_code=409, detail="Login or email already exists in the database")
 
     return create_user_account(login, email, password)
+
+@app.get("/validateSession")
+def sessionGet(sessionID: str):
+    if not validate_session_inbase(sessionID):
+        raise HTTPException(status_code=409, detail="Session ID wrong or expired")
+
+    return {"message": "session valid"}
+
+@app.post("/addSession")
+def sessionAdd(userID: str):
+    result = add_new_session(userID)
+    if "sessionId" in result:
+        return {"sessionId": result["sessionId"]}
+    else:
+        raise HTTPException(status_code=409, detail="Failed to add new session")
+    
 
 @app.get("/")
 async def hello():
