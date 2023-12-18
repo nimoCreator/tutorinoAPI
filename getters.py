@@ -1,12 +1,21 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer
 import pymysql
 from pydantic import BaseModel
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+import jwt
+from jwt import PyJWTError
 import random
 
 class Item(BaseModel):
     login_or_email: str
     password: str
+
+SECRET_KEY = "your-secret-key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 15
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 connection = pymysql.connect(host="tutorino.ddns.net",user="TutorinoAPI",passwd="IOProj2023",database="tutorino")
 cursor = connection.cursor()
@@ -132,6 +141,32 @@ def add_new_session(userID: str):
     except pymysql.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+def create_access_token(data: dict, expires_delta: timedelta):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + expires_delta
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def verify_token(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        session_id: str = payload.get("sub")
+        if session_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    if not validate_session_inbase(session_id):
+        raise HTTPException(status_code=401, detail="Session ID wrong or expired")
+
+    return session_id
 
 @app.post("/login")
 def login(item: Item):
@@ -140,15 +175,25 @@ def login(item: Item):
 
     if not validate_login_credentials(item.login_or_email, item.password):
         raise HTTPException(status_code=401, detail="Invalid password")
-    
-    return {"message": "login success"}
+
+    session_id = add_new_session(item.login_or_email)["sessionId"]
+    expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data={"sub": session_id}, expires_delta=expires_delta)
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/register")
 def register(login: str, email: str, password: str):
     if is_login_or_email_in_database(login) or is_login_or_email_in_database(email):
         raise HTTPException(status_code=409, detail="Login or email already exists in the database")
 
-    return create_user_account(login, email, password)
+    # Create a new user account and return the access token
+    user_id = create_user_account(login, email, password)
+    session_id = add_new_session(user_id)["sessionId"]
+    expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(data={"sub": session_id}, expires_delta=expires_delta)
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/validateSession")
 def sessionGet(sessionID: str):
