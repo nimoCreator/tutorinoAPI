@@ -126,7 +126,7 @@ def create_user_account(login: str, email: str, password: str):
             return {"message": "User account created successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-   
+
 def add_new_session(userID: str):
     try:
         with connection.cursor() as cursor:
