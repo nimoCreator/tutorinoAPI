@@ -1,32 +1,24 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
+from flask import Flask, request, jsonify
 import pymysql
-from pydantic import BaseModel
 from datetime import date, timedelta, datetime
 import jwt
-from jwt import PyJWTError
 import random
+from werkzeug.exceptions import Unauthorized
 
-class Item(BaseModel):
-    login_or_email: str
-    password: str
+app = Flask(__name__)
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
-connection = pymysql.connect(host="tutorino.ddns.net",user="TutorinoAPI",passwd="IOProj2023",database="tutorino")
+connection = pymysql.connect(host="tutorino.ddns.net", user="TutorinoAPI", passwd="IOProj2023", database="tutorino")
 cursor = connection.cursor()
-
-app = FastAPI()
 
 allowed_tables = ["ogloszenie", "operator", "przedmioty", "rating", "reports", "uczen", "users", "wiadomosci", "korepetytor", "korepetycje","czlonkowie_konwersacji","konwersacje","seen_by"]
 
 def get_table_data(table_name: str):
     if table_name not in allowed_tables:
-        raise HTTPException(status_code=404, detail="Table not found")
+        return jsonify({"error": "Table not found"}), 404
 
     try:
         with connection.cursor() as cursor:
@@ -34,7 +26,7 @@ def get_table_data(table_name: str):
             table_data = cursor.fetchall()
             return table_data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({"error": str(e)}), 500
 
 def get_korepetytor_profile(user_id: int):
     try:
@@ -48,9 +40,9 @@ def get_korepetytor_profile(user_id: int):
                 oceny_korepetytora = cursor.fetchall()
                 return korepetytor_data, korepetytor_ogloszenia, oceny_korepetytora
             else:
-                raise HTTPException(status_code=404, detail="Korepetytor not found")
+                return jsonify({"error": "Korepetytor not found"}), 404
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return jsonify({"error": str(e)}), 500
 
 def get_konwersacja(user_id: int):
     try:
@@ -60,7 +52,7 @@ def get_konwersacja(user_id: int):
             konwersacja_data = cursor.fetchall()
             return konwersacja_data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
 
 def get_wiadomosci(konwersacja_id: int):
     try:
@@ -69,7 +61,7 @@ def get_wiadomosci(konwersacja_id: int):
             wiadomosci_data = cursor.fetchall()
             return wiadomosci_data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
 
 def get_korepetycje_by_uczen(user_id: int):
     try:
@@ -78,7 +70,7 @@ def get_korepetycje_by_uczen(user_id: int):
             korepetycje_data = cursor.fetchall()
             return korepetycje_data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
 
 def get_korepetycje_by_korepetytor(user_id: int):
     try:
@@ -87,7 +79,7 @@ def get_korepetycje_by_korepetytor(user_id: int):
             korepetycje_data = cursor.fetchall()
             return korepetycje_data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
     
 def is_login_or_email_in_database(login_or_email: str):
     try:
@@ -96,7 +88,7 @@ def is_login_or_email_in_database(login_or_email: str):
             result = cursor.fetchone()
             return result is not None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
     
 
 def validate_login_credentials(login: str, password: str):
@@ -106,7 +98,7 @@ def validate_login_credentials(login: str, password: str):
             result = cursor.fetchone()
             return result is not None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
     
 def validate_session_inbase(id: str):
     try:
@@ -115,7 +107,7 @@ def validate_session_inbase(id: str):
             result = cursor.fetchone()
             return result is not None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
     
 
 def create_user_account(login: str, email: str, password: str):
@@ -125,7 +117,7 @@ def create_user_account(login: str, email: str, password: str):
             connection.commit()
             return {"message": "User account created successfully"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
    
 def add_new_session(userID: str):
     try:
@@ -139,7 +131,7 @@ def add_new_session(userID: str):
             connection.commit()
             return {"sessionId":sessionId}
     except pymysql.Error as e:
-        raise HTTPException(status_code=500, detail=str(e))
+         return jsonify({"error": str(e)}), 500
 
 def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
@@ -149,45 +141,52 @@ def create_access_token(data: dict, expires_delta: timedelta):
     return encoded_jwt
 
 
-def verify_token(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+def verify_token():
+    token = request.headers.get("Authorization", "").split("Bearer ")[-1]
+    
+    credentials_exception = Unauthorized("Invalid credentials")
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        session_id: str = payload.get("sub")
+        session_id = payload.get("sub")
         if session_id is None:
             raise credentials_exception
-    except JWTError:
+    except jwt.InvalidTokenError:
         raise credentials_exception
 
     if not validate_session_inbase(session_id):
-        raise HTTPException(status_code=401, detail="Session ID wrong or expired")
+        raise Unauthorized("Session ID wrong or expired")
 
     return session_id
 
-@app.post("/login")
-def login(item: Item):
-    if not is_login_or_email_in_database(item.login_or_email):
-        raise HTTPException(status_code=401, detail="Invalid login or email")
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    login_or_email = data.get("login_or_email")
+    password = data.get("password")
 
-    if not validate_login_credentials(item.login_or_email, item.password):
-        raise HTTPException(status_code=401, detail="Invalid password")
+    if not is_login_or_email_in_database(login_or_email):
+        return jsonify({"detail": "Invalid login or email"}), 401
 
-    session_id = add_new_session(item.login_or_email)["sessionId"]
+    if not validate_login_credentials(login_or_email, password):
+        return jsonify({"detail": "Invalid password"}), 401
+
+    session_id = add_new_session(login_or_email)["sessionId"]
     expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": session_id}, expires_delta=expires_delta)
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return jsonify({"access_token": access_token, "token_type": "bearer"})
 
-@app.post("/register")
-def register(login: str, email: str, password: str):
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.json
+    login = data.get("login")
+    email = data.get("email")
+    password = data.get("password")
+
     if is_login_or_email_in_database(login) or is_login_or_email_in_database(email):
-        raise HTTPException(status_code=409, detail="Login or email already exists in the database")
+        return jsonify({"error": "Login or email already exists in the database"}), 409
 
-    # Create a new user account and return the access token
     user_id = create_user_account(login, email, password)
     session_id = add_new_session(user_id)["sessionId"]
     expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -195,98 +194,105 @@ def register(login: str, email: str, password: str):
 
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/validateSession")
-def sessionGet(sessionID: str):
-    if not validate_session_inbase(sessionID):
-        raise HTTPException(status_code=409, detail="Session ID wrong or expired")
+@app.route("/validateSession", methods=["GET"])
+def session_get():
+    session_id = request.args.get("sessionID")
+    if not validate_session_inbase(session_id):
+        return jsonify({"error": "Session ID wrong or expired"}), 409
 
     return {"message": "session valid"}
 
-@app.post("/addSession")
-def sessionAdd(userID: str):
-    result = add_new_session(userID)
+@app.route("/addSession", methods=["POST"])
+def session_add():
+    data = request.json
+    user_id = data.get("userID")
+
+    result = add_new_session(user_id)
     if "sessionId" in result:
         return {"sessionId": result["sessionId"]}
     else:
-        raise HTTPException(status_code=409, detail="Failed to add new session")
+        return jsonify({"error": "Failed to add new session"}), 409
     
-
-@app.get("/")
-async def hello():
+@app.route("/")
+def hello():
     return "Hello"
 
-@app.get("/ogloszenie")
-async def get_ogloszenie():
-    return get_table_data("ogloszenie")
+@app.route("/ogloszenie")
+def get_ogloszenie():
+    return jsonify(get_table_data("ogloszenie"))
 
-@app.get("/operator")
-async def get_operator():
-    return get_table_data("operator")
+@app.route("/operator")
+def get_operator():
+    return jsonify(get_table_data("operator"))
 
-@app.get("/przedmioty")
-async def get_przedmioty():
-    return get_table_data("przedmioty")
+@app.route("/przedmioty")
+def get_przedmioty():
+    return jsonify(get_table_data("przedmioty"))
 
-@app.get("/rating")
-async def get_rating():
-    return get_table_data("rating")
+@app.route("/rating")
+def get_rating():
+    return jsonify(get_table_data("rating"))
 
-@app.get("/reports")
-async def get_reports():
-    return get_table_data("reports")
+@app.route("/reports")
+def get_reports():
+    return jsonify(get_table_data("reports"))
 
-@app.get("/uczen")
-async def get_uczen():
-    return get_table_data("uczen")
+@app.route("/uczen")
+def get_uczen():
+    return jsonify(get_table_data("uczen"))
 
-@app.get("/users")
-async def get_users():
-    return get_table_data("users")
+@app.route("/users")
+def get_users():
+    return jsonify(get_table_data("users"))
 
-@app.get("/wiadomosci")
-async def get_wiadomosci():
-    return get_table_data("wiadomosci")
+@app.route("/wiadomosci")
+def get_wiadomosci():
+    return jsonify(get_table_data("wiadomosci"))
 
-@app.get("/korepetytor")
-async def get_korepetytor():
-    return get_table_data("korepetytor")
+@app.route("/korepetytor")
+def get_korepetytor():
+    return jsonify(get_table_data("korepetytor"))
 
-@app.get("/korepetycje")
-async def get_korepetycje():
-    return get_table_data("korepetycje")
+@app.route("/korepetycje")
+def get_korepetycje():
+    return jsonify(get_table_data("korepetycje"))
 
-@app.get("/seen_by")
-async def get_ogloszenie():
-    return get_table_data("seen_by")
+@app.route("/seen_by")
+def get_seen_by():
+    return jsonify(get_table_data("seen_by"))
 
-@app.get("/konwersacje")
-async def get_ogloszenie():
-    return get_table_data("konwersacje")
+@app.route("/konwersacje")
+def get_konwersacje():
+    return jsonify(get_table_data("konwersacje"))
 
-@app.get("/czlonkowie_konwersacji")
-async def get_ogloszenie():
-    return get_table_data("czlonkowie_konwersacji")
+@app.route("/czlonkowie_konwersacji")
+def get_czlonkowie_konwersacji():
+    return jsonify(get_table_data("czlonkowie_konwersacji"))
 
-@app.get("/korepetytor_profile/{user_id}")
-async def get_korepetytor_profile(user_id: int):
-    return get_korepetytor_profile(user_id)
+@app.route("/korepetytor_profile/<int:user_id>")
+def get_korepetytor_profile(user_id):
+    return jsonify(get_korepetytor_profile(user_id))
 
-@app.get("/konwersacje/{user_id}")
-async def get_konwersacje_uzytkownika(user_id: int):
-    return get_konwersacja(user_id)
+@app.route("/konwersacje/<int:user_id>")
+def get_konwersacje_uzytkownika(user_id):
+    return jsonify(get_konwersacja(user_id))
 
-@app.get("/wiadomosci/{conversation_id}")
-async def get_wiadomosci_konwersacji(conversation_id: int):
-    return get_wiadomosci(conversation_id)
+@app.route("/wiadomosci/<int:conversation_id>")
+def get_wiadomosci_konwersacji(conversation_id):
+    return jsonify(get_wiadomosci(conversation_id))
 
-@app.get("/korepetycje_k/{user_id}")
-async def get_korepetytor_korepetycje(user_id: int):
-    return get_korepetycje_by_korepetytor(user_id)
+@app.route("/korepetycje_k/<int:user_id>")
+def get_korepetytor_korepetycje(user_id):
+    return jsonify(get_korepetycje_by_korepetytor(user_id))
 
-@app.get("/korepetycje_u/{user_id}")
-async def get_uczen_korepetycje(user_id: int):
-    return get_korepetycje_by_uczen(user_id)
+@app.route("/korepetycje_u/<int:user_id>")
+def get_uczen_korepetycje(user_id):
+    return jsonify(get_korepetycje_by_uczen(user_id))
 
-@app.on_event("shutdown")
-async def shutdown_event():
+@app.route("/shutdown")
+def shutdown_event():
     connection.close()
+    return "Server shutting down..."
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0",port=5000)
