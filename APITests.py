@@ -281,7 +281,7 @@ class TestGetMyOffersAPI(unittest.TestCase):
         json_data = response.get_json()
         self.assertIsInstance(json_data, list)
 
-      # Test case for retrieving data from the "/czlonkowie_konwersacji" endpoint
+    # Test case for retrieving data from the "/czlonkowie_konwersacji" endpoint
     def test_get_czlonkowie_konwersacji(self):
         # Make a GET request to the "/czlonkowie_konwersacji" endpoint
         response = self.app.get("http://173.212.216.164:5555/czlonkowie_konwersacji")
