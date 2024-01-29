@@ -122,5 +122,83 @@ class TestGetMyOffersAPI(unittest.TestCase):
         json_data = response.get_json()
         self.assertIsInstance(json_data, list)
 
+    def test_get_uczen(self):
+        response = self.app.get("http://173.212.216.164:5555/uczen")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_users(self):
+        response = self.app.get("http://173.212.216.164:5555/users")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_wiadomosci(self):
+        response = self.app.get("http://173.212.216.164:5555/wiadomosci")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_korepetytor(self):
+        response = self.app.get("http://173.212.216.164:5555/korepetytor")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_korepetycje(self):
+        response = self.app.get("http://173.212.216.164:5555/korepetycje")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_seen_by(self):
+        response = self.app.get("http://173.212.216.164:5555/seen_by")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_konwersacje(self):
+        response = self.app.get("http://173.212.216.164:5555/konwersacje")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_czlonkowie_konwersacji(self):
+        response = self.app.get("http://173.212.216.164:5555/czlonkowie_konwersacji")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_korepetytor_profile(self):
+        response = self.app.get("http://173.212.216.164:5555/korepetytor_profile/1")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, dict)
+
+    def test_get_konwersacje_uzytkownika(self):
+        response = self.app.get("http://173.212.216.164:5555/konwersacje/1")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_wiadomosci_konwersacji(self):
+        response = self.app.get("http://173.212.216.164:5555/wiadomosci/1")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_korepetytor_korepetycje(self):
+        response = self.app.get("http://173.212.216.164:5555/korepetycje_k/1")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_uczen_korepetycje(self):
+        response = self.app.get("http://173.212.216.164:5555/korepetycje_u/1")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
 if __name__ == '__main__':
     unittest.main()
