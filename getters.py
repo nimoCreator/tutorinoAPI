@@ -159,6 +159,29 @@ def verify_token():
 
     return session_id
 
+def getOffers(uuid, session_id):
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM sessions WHERE user_uuid=? AND session_id=?", (uuid, session_id))
+        result = cursor.fetchone()
+
+        if result:
+            get_korepetycje_by_uczen(uuid)
+        else:
+            return jsonify({"detail": "No results"}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/getOffers",methods=["GET"])
+def getMyOffers():
+    session_id = request.args.get("sessionID")
+    userId = request.args.get("userID")
+    if not validate_session_inbase(session_id):
+        return jsonify({"error": "Session ID expired"}), 409
+    getOffers(userId,session_id)
+    
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -295,4 +318,4 @@ def shutdown_event():
     return "Server shutting down..."
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5000)
+    app.run(host="0.0.0.0",port=5555)
