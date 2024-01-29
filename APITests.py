@@ -1,7 +1,12 @@
 import unittest
 import requests
+from getters import app
 
 class TestGetMyOffersAPI(unittest.TestCase):
+
+    # This method is called before each test
+    def setUp(self):
+        self.app = app.test_client()
 
     # Test case for retrieving offers
     def test_get_my_offers(self):
@@ -108,7 +113,7 @@ class TestGetMyOffersAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("sessionId", json_data)
 
-       # Test case for adding a session (failure)
+    # Test case for adding a session (failure)
     def test_session_add_failure(self):
         # Set invalid user ID for the test
         data = {"userID": "invaliduser"}
