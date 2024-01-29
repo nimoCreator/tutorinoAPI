@@ -78,7 +78,7 @@ class TestGetMyOffersAPI(unittest.TestCase):
         self.assertIn("sessionId", json_data)
 
     def test_session_add_failure(self):
-        data = {"userID": "invalid_user"}
+        data = {"userID": "invaliduser"}
 
         response = self.app.post("http://173.212.216.164:5555/addSession", json=data)
 
@@ -86,6 +86,41 @@ class TestGetMyOffersAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 409)
         self.assertIn("error", json_data)
         self.assertEqual(json_data["error"], "Failed to add new session")
+
+    def test_hello(self):
+        response = self.app.get("http://173.212.216.164:5555/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.decode("utf-8"), "Hello")
+
+    def test_get_ogloszenie(self):
+        response = self.app.get("http://173.212.216.164:5555/ogloszenie")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_operator(self):
+        response = self.app.get("http://173.212.216.164:5555/operator")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_przedmioty(self):
+        response = self.app.get("http://173.212.216.164:5555/przedmioty")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_rating(self):
+        response = self.app.get("http://173.212.216.164:5555/rating")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
+
+    def test_get_reports(self):
+        response = self.app.get("http://173.212.216.164:5555/reports")
+        self.assertEqual(response.status_code, 200)
+        json_data = response.get_json()
+        self.assertIsInstance(json_data, list)
 
 if __name__ == '__main__':
     unittest.main()
