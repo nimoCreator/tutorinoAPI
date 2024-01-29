@@ -7,15 +7,19 @@ from werkzeug.exceptions import Unauthorized
 
 app = Flask(__name__)
 
+# Constants for JWT authentication
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
 
+# Database connection setup
 connection = pymysql.connect(host="tutorino.ddns.net", user="TutorinoAPI", passwd="IOProj2023", database="tutorino")
 cursor = connection.cursor()
 
+# List of allowed tables to prevent SQL injection
 allowed_tables = ["ogloszenie", "operator", "przedmioty", "rating", "reports", "uczen", "users", "wiadomosci", "korepetytor", "korepetycje","czlonkowie_konwersacji","konwersacje","seen_by"]
 
+# Function to retrieve data from a specified table in the database
 def get_table_data(table_name: str):
     if table_name not in allowed_tables:
         return jsonify({"error": "Table not found"}), 404
@@ -28,6 +32,7 @@ def get_table_data(table_name: str):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Function to get the profile of a tutor, along with their advertisements and ratings
 def get_korepetytor_profile(user_id: int):
     try:
         with connection.cursor() as cursor:
@@ -44,6 +49,7 @@ def get_korepetytor_profile(user_id: int):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Function to get conversations for a user
 def get_konwersacja(user_id: int):
     try:
         with connection.cursor() as cursor:
@@ -52,8 +58,9 @@ def get_konwersacja(user_id: int):
             konwersacja_data = cursor.fetchall()
             return konwersacja_data
     except Exception as e:
-         return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
+# Function to get messages for a conversation
 def get_wiadomosci(konwersacja_id: int):
     try:
         with connection.cursor() as cursor:
@@ -61,8 +68,9 @@ def get_wiadomosci(konwersacja_id: int):
             wiadomosci_data = cursor.fetchall()
             return wiadomosci_data
     except Exception as e:
-         return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
+# Function to get tutoring sessions for a student
 def get_korepetycje_by_uczen(user_id: int):
     try:
         with connection.cursor() as cursor:
@@ -70,8 +78,9 @@ def get_korepetycje_by_uczen(user_id: int):
             korepetycje_data = cursor.fetchall()
             return korepetycje_data
     except Exception as e:
-         return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
+# Function to get tutoring sessions for a tutor
 def get_korepetycje_by_korepetytor(user_id: int):
     try:
         with connection.cursor() as cursor:
@@ -79,8 +88,9 @@ def get_korepetycje_by_korepetytor(user_id: int):
             korepetycje_data = cursor.fetchall()
             return korepetycje_data
     except Exception as e:
-         return jsonify({"error": str(e)}), 500
-    
+        return jsonify({"error": str(e)}), 500
+
+# Function to check if login or email exists in the database
 def is_login_or_email_in_database(login_or_email: str):
     try:
         with connection.cursor() as cursor:
@@ -88,18 +98,19 @@ def is_login_or_email_in_database(login_or_email: str):
             result = cursor.fetchone()
             return result is not None
     except Exception as e:
-         return jsonify({"error": str(e)}), 500
-    
+        return jsonify({"error": str(e)}), 500
 
+# Function to validate login credentials
 def validate_login_credentials(login: str, password: str):
-    try:    
+    try:
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM users WHERE (login = %s OR email = %s) AND password = %s", (login, login, password))
             result = cursor.fetchone()
             return result is not None
     except Exception as e:
-         return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
     
+# Function to validate if a session exists in the database
 def validate_session_inbase(id: str):
     try:
         with connection.cursor() as cursor:
@@ -108,8 +119,8 @@ def validate_session_inbase(id: str):
             return result is not None
     except Exception as e:
          return jsonify({"error": str(e)}), 500
-    
 
+# Function to create a new user account
 def create_user_account(login: str, email: str, password: str):
     try:
         with connection.cursor() as cursor:
@@ -118,7 +129,8 @@ def create_user_account(login: str, email: str, password: str):
             return {"message": "User account created successfully"}
     except Exception as e:
          return jsonify({"error": str(e)}), 500
-   
+
+# Function to add a new session for a user
 def add_new_session(userID: str):
     try:
         with connection.cursor() as cursor:
@@ -129,10 +141,11 @@ def add_new_session(userID: str):
             sessionId = str(random.randint(10000000000,99999999999))
             cursor.execute("INSERT INTO sessions (sessionId, user_uuid, valid_from, valid_until, session_key) VALUES (%s, %s, %s, %s)", (sessionId, userID, valid_from, valid_until))
             connection.commit()
-            return {"sessionId":sessionId}
+            return {"sessionId": sessionId}
     except pymysql.Error as e:
          return jsonify({"error": str(e)}), 500
 
+# Function to create an access token
 def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
@@ -140,7 +153,7 @@ def create_access_token(data: dict, expires_delta: timedelta):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-
+# Function to verify the access token and check the session ID in the database
 def verify_token():
     token = request.headers.get("Authorization", "").split("Bearer ")[-1]
     
@@ -159,6 +172,7 @@ def verify_token():
 
     return session_id
 
+# Function to retrieve offers based on user ID and session ID
 def getOffers(uuid, session_id):
     cursor = connection.cursor()
 
@@ -173,15 +187,16 @@ def getOffers(uuid, session_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route("/getOffers",methods=["GET"])
+# Route to get offers for the authenticated user
+@app.route("/getOffers", methods=["GET"])
 def getMyOffers():
     session_id = request.args.get("sessionID")
     userId = request.args.get("userID")
     if not validate_session_inbase(session_id):
         return jsonify({"error": "Session ID expired"}), 409
-    getOffers(userId,session_id)
-    
+    getOffers(userId, session_id)
 
+# Route for user login
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -194,12 +209,14 @@ def login():
     if not validate_login_credentials(login_or_email, password):
         return jsonify({"detail": "Invalid password"}), 401
 
+    # Creating a new session and access token for the user
     session_id = add_new_session(login_or_email)["sessionId"]
     expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": session_id}, expires_delta=expires_delta)
 
     return jsonify({"access_token": access_token, "token_type": "bearer"})
 
+# Route for user registration
 @app.route("/register", methods=["POST"])
 def register():
     data = request.json
@@ -207,39 +224,50 @@ def register():
     email = data.get("email")
     password = data.get("password")
 
+    # Check if the login or email already exists in the database
     if is_login_or_email_in_database(login) or is_login_or_email_in_database(email):
         return jsonify({"error": "Login or email already exists in the database"}), 409
 
+    # Create a new user account
     user_id = create_user_account(login, email, password)
+    
+    # Add a new session for the user and generate an access token
     session_id = add_new_session(user_id)["sessionId"]
     expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": session_id}, expires_delta=expires_delta)
 
     return {"access_token": access_token, "token_type": "bearer"}
 
+# Route to validate a session
 @app.route("/validateSession", methods=["GET"])
 def session_get():
     session_id = request.args.get("sessionID")
+    
+    # Check if the session ID is valid or expired
     if not validate_session_inbase(session_id):
         return jsonify({"error": "Session ID wrong or expired"}), 409
 
     return {"message": "session valid"}
 
+# Route to add a new session
 @app.route("/addSession", methods=["POST"])
 def session_add():
     data = request.json
     user_id = data.get("userID")
 
+    # Add a new session for the specified user and return the session ID
     result = add_new_session(user_id)
     if "sessionId" in result:
         return {"sessionId": result["sessionId"]}
     else:
-        return jsonify({"error": "Failed to add new session"}), 409
-    
+        return jsonify({"error": "Failed to add a new session"}), 409
+
+# Hello route for testing
 @app.route("/")
 def hello():
     return "Hello"
 
+# Routes to retrieve data from different tables
 @app.route("/ogloszenie")
 def get_ogloszenie():
     return jsonify(get_table_data("ogloszenie"))
@@ -312,10 +340,13 @@ def get_korepetytor_korepetycje(user_id):
 def get_uczen_korepetycje(user_id):
     return jsonify(get_korepetycje_by_uczen(user_id))
 
+# Route to shutdown the server
 @app.route("/shutdown")
 def shutdown_event():
     connection.close()
     return "Server shutting down..."
 
+# Main execution block
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5555)
+    # Run the Flask app on specified host and port
+    app.run(host="0.0.0.0", port=5555)
