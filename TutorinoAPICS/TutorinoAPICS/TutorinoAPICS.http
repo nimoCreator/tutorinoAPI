@@ -1,0 +1,6 @@
+@TutorinoAPICS_HostAddress = http://localhost:5262
+
+GET {{TutorinoAPICS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

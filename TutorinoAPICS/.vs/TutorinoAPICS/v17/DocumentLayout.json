@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\xampp\\tutorinoAPI\\TutorinoAPICS\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6117A89C-8580-4C18-8CF5-03D582A402D3}|TutorinoAPICS\\TutorinoAPICS.csproj|c:\\xampp\\tutorinoapi\\tutorinoapics\\tutorinoapics\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6117A89C-8580-4C18-8CF5-03D582A402D3}|TutorinoAPICS\\TutorinoAPICS.csproj|solutionrelative:tutorinoapics\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 469,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\xampp\\tutorinoAPI\\TutorinoAPICS\\TutorinoAPICS\\Program.cs",
+              "RelativeDocumentMoniker": "TutorinoAPICS\\Program.cs",
+              "ToolTip": "C:\\xampp\\tutorinoAPI\\TutorinoAPICS\\TutorinoAPICS\\Program.cs",
+              "RelativeToolTip": "TutorinoAPICS\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-28T20:06:23.831Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

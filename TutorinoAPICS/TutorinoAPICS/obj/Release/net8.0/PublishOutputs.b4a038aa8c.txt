@@ -1,0 +1,11 @@
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\TutorinoAPICS.exe
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\appsettings.Development.json
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\appsettings.json
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\TutorinoAPICS.dll
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\TutorinoAPICS.deps.json
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\TutorinoAPICS.runtimeconfig.json
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\TutorinoAPICS.pdb
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\Microsoft.OpenApi.dll
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\xampp\tutorinoAPI\TutorinoAPICS\TutorinoAPICS\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerUI.dll
