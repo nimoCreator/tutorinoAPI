@@ -340,6 +340,10 @@ def get_korepetytor_korepetycje(user_id):
 def get_uczen_korepetycje(user_id):
     return jsonify(get_korepetycje_by_uczen(user_id))
 
+@app.route("/is_login_or_email_in_database/<string:logemail>")
+def is_in_database(logemail):
+    return jsonify(is_login_or_email_in_database(logemail))
+
 # Route to shutdown the server
 @app.route("/shutdown")
 def shutdown_event():
