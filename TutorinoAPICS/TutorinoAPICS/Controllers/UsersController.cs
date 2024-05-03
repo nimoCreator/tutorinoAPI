@@ -7,8 +7,8 @@ using TutorinoAPICS.Models;
 
 namespace TutorinoAPICS.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class UsersController : ControllerBase
     {
         public readonly IConfiguration configuration;
@@ -17,15 +17,15 @@ namespace TutorinoAPICS.Controllers
             this.configuration = configuration;
         }
 
-        [HttpGet]
-        [Route("getAllUsers")]
-        public JsonResult GetUsers()
+        [HttpGet(Name = "getAllUsers")]
+        public String GetUsers()
         {
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
             SqlDataAdapter data = new SqlDataAdapter("Select * from users", con);
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
             List<User> users = new List<User>();
+            Response response = new Response();
             if (dataTable.Rows.Count > 0)
             {
                 for (int i = 0; i < dataTable.Rows.Count; i++)
@@ -39,7 +39,11 @@ namespace TutorinoAPICS.Controllers
             }
             if(users.Count>0)
             {
-                JsonConvert.SerializeObject(users);
+                return JsonConvert.SerializeObject(users);
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(response);
             }
         }
     }
