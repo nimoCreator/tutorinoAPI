@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TutorinoAPICS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d22c4303d773fb182a044fdafd12ff512a41eee7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d349dde15bcc3f7ded0ff0aace6cc6a4b7821c86")]
 [assembly: System.Reflection.AssemblyProductAttribute("TutorinoAPICS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TutorinoAPICS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
