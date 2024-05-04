@@ -17,7 +17,8 @@ namespace TutorinoAPICS.Controllers
             this.configuration = configuration;
         }
 
-        [HttpGet(Name = "getAllUsers")]
+        [HttpGet]
+        [Route("getAllUsers")]
         public String GetUsers()
         {
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
