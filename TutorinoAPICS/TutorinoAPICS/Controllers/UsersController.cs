@@ -54,7 +54,7 @@ namespace TutorinoAPICS.Controllers
         public String AddUser(UserAdded newUser)
         {
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
-            SqlCommand cmd = new SqlCommand("Insert into users(name,surname,login,email) values('" + newUser.UserName + "','" + newUser.UserSurname + "','" + newUser.UserLogin + "','" + newUser.UserEmail + "')", con);
+            SqlCommand cmd = new SqlCommand("Insert into users(name,surname,login,email,password) values('" + newUser.UserName + "','" + newUser.UserSurname + "','" + newUser.UserLogin + "','" + newUser.UserEmail + "','" + newUser.UserPassword + "')", con);
             con.Open();
             int i;
             try
@@ -62,7 +62,7 @@ namespace TutorinoAPICS.Controllers
                 i = cmd.ExecuteNonQuery();
             } catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new Response(100, "Data failed"));
+                return JsonConvert.SerializeObject(new Response(102, "Data Exists"));
             }
             con.Close();
             if (i > 0)
@@ -72,6 +72,32 @@ namespace TutorinoAPICS.Controllers
             else
             {
                 return JsonConvert.SerializeObject(new Response(100, "Data failed"));
+            }
+        }
+
+        [HttpPost]
+        [Route("loginUser")]
+        public String LogUser(UserLogin userData)
+        {
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
+            SqlDataAdapter data = new SqlDataAdapter("Select * from users where login = '" + userData.Username + "' or password = '" + userData.Email + "'"
+, con);
+            DataTable dataTable = new DataTable();
+            data.Fill(dataTable);
+            if (dataTable.Rows.Count > 0)
+            {
+                if (Convert.ToString(dataTable.Rows[0]["password"]) == userData.Password)
+                {
+                    return JsonConvert.SerializeObject(new Response(0, "Access"));
+                }
+                else
+                {
+                    return JsonConvert.SerializeObject(new Response(101, "Wrong Password"));
+                }
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new Response(100, "No User"));
             }
         }
     }
