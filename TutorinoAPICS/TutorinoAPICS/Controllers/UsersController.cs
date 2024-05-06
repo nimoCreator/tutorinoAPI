@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
 using System.Data.SqlClient;
+using System.Reflection.Metadata.Ecma335;
 using TutorinoAPICS.Models;
 
 namespace TutorinoAPICS.Controllers
@@ -53,7 +54,18 @@ namespace TutorinoAPICS.Controllers
         public String AddUser(UserAdded newUser)
         {
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
-            SqlCommand cmd = new SqlCommand("Insert")
+            SqlCommand cmd = new SqlCommand("Insert into users(name,surname) values('" + newUser.UserName + "','" + newUser.UserSurname + "')", con);
+            con.Open();
+            int i = cmd.ExecuteNonQuery();
+            con.Close();
+            if (i > 0)
+            {
+                return JsonConvert.SerializeObject(new Response(0, "Data added"));
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new Response(100, "Data failed"));
+            }
         }
     }
 }
