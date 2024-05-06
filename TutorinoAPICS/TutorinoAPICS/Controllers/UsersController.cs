@@ -47,5 +47,13 @@ namespace TutorinoAPICS.Controllers
                 return JsonConvert.SerializeObject(response);
             }
         }
+
+        [HttpPost]
+        [Route("addUser")]
+        public String AddUser(UserAdded newUser)
+        {
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
+            SqlCommand cmd = new SqlCommand("Insert")
+        }
     }
 }
