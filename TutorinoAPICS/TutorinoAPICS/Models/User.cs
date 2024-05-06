@@ -11,5 +11,7 @@
     {
         public String UserName { get; set; }
         public String UserSurname { get; set; }
+        public String UserLogin { get; set; }
+        public String UserEmail { get; set; }
     }
 }

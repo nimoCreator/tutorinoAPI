@@ -54,9 +54,16 @@ namespace TutorinoAPICS.Controllers
         public String AddUser(UserAdded newUser)
         {
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
-            SqlCommand cmd = new SqlCommand("Insert into users(name,surname) values('" + newUser.UserName + "','" + newUser.UserSurname + "')", con);
+            SqlCommand cmd = new SqlCommand("Insert into users(name,surname,login,email) values('" + newUser.UserName + "','" + newUser.UserSurname + "','" + newUser.UserLogin + "','" + newUser.UserEmail + "')", con);
             con.Open();
-            int i = cmd.ExecuteNonQuery();
+            int i;
+            try
+            {
+                i = cmd.ExecuteNonQuery();
+            } catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new Response(100, "Data failed"));
+            }
             con.Close();
             if (i > 0)
             {
