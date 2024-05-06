@@ -18,6 +18,7 @@ namespace TutorinoAPICS.Controllers
             this.configuration = configuration;
         }
 
+        //Test API to retrieve data about users in database
         [HttpGet]
         [Route("getAllUsers")]
         public String GetUsers()
@@ -49,6 +50,7 @@ namespace TutorinoAPICS.Controllers
             }
         }
 
+        //Response codes: 0 - User Added to Database, 102 - User with given mail or login exists in database, 100 - other error
         [HttpPost]
         [Route("addUser")]
         public String AddUser(UserAdded newUser)
@@ -71,17 +73,17 @@ namespace TutorinoAPICS.Controllers
             }
             else
             {
-                return JsonConvert.SerializeObject(new Response(100, "Data failed"));
+                return JsonConvert.SerializeObject(new Response());
             }
         }
 
+        //Status codes: 0 - Gives access, provided data are correct. 101 - Wrong Password given. 100 - No user with given mail or login in database.
         [HttpPost]
         [Route("loginUser")]
         public String LogUser(UserLogin userData)
         {
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
-            SqlDataAdapter data = new SqlDataAdapter("Select * from users where login = '" + userData.Username + "' or password = '" + userData.Email + "'"
-, con);
+            SqlDataAdapter data = new SqlDataAdapter("Select * from users where login = '" + userData.Username + "' or password = '" + userData.Email + "'", con);
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
             if (dataTable.Rows.Count > 0)
