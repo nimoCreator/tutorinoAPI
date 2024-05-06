@@ -11,6 +11,7 @@
     public class OfferAdded
     {
         public int userID { get; set; }
+        public int subjectID { get; set; }
         public double price { get; set; }
         public string description { get; set; }
     }

@@ -23,7 +23,7 @@ namespace TutorinoAPICS.Controllers
         [Route("getAllOffers")]
         public String GetUsers()
         {
-            SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
             SqlDataAdapter data = new SqlDataAdapter("Select * from offers", con);
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
@@ -46,6 +46,33 @@ namespace TutorinoAPICS.Controllers
             else
             {
                 return JsonConvert.SerializeObject(new Response(100,"Empty"));
+            }
+        }
+
+        //Codes 0 - Data added successfully, 100 - Other Error, 101 - User or Subject are not correct
+        [HttpPost]
+        [Route("addOffer")]
+        public String AddUser(OfferAdded newOffer)
+        {
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
+            SqlCommand cmd = new SqlCommand("Insert into offers(kuid,sid,price,[desc]) values('" + newOffer.userID + "','" + newOffer.subjectID + "','" + newOffer.price + "','" + newOffer.description + "')", con);
+            con.Open();
+            int i;
+            try
+            {
+                i = cmd.ExecuteNonQuery();
+            } catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new Response(101, "Error"));
+            }
+            con.Close();
+            if (i > 0)
+            {
+                return JsonConvert.SerializeObject(new Response(0, "Data added"));
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new Response());
             }
         }
     }

@@ -23,7 +23,7 @@ namespace TutorinoAPICS.Controllers
         [Route("getAllUsers")]
         public String GetUsers()
         {
-            SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
             SqlDataAdapter data = new SqlDataAdapter("Select * from users", con);
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
@@ -55,7 +55,7 @@ namespace TutorinoAPICS.Controllers
         [Route("addUser")]
         public String AddUser(UserAdded newUser)
         {
-            SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
             SqlCommand cmd = new SqlCommand("Insert into users(name,surname,login,email,password) values('" + newUser.UserName + "','" + newUser.UserSurname + "','" + newUser.UserLogin + "','" + newUser.UserEmail + "','" + newUser.UserPassword + "')", con);
             con.Open();
             int i;
@@ -82,7 +82,7 @@ namespace TutorinoAPICS.Controllers
         [Route("loginUser")]
         public String LogUser(UserLogin userData)
         {
-            SqlConnection con = new SqlConnection(configuration.GetConnectionString("UsersAppCon").ToString());
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
             SqlDataAdapter data = new SqlDataAdapter("Select * from users where login = '" + userData.Username + "' or password = '" + userData.Email + "'", con);
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
