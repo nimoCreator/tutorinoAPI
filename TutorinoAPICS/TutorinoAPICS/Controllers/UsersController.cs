@@ -83,7 +83,7 @@ namespace TutorinoAPICS.Controllers
         public String LogUser(UserLogin userData)
         {
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlDataAdapter data = new SqlDataAdapter("Select * from users where login = '" + userData.Username + "' or password = '" + userData.Email + "'", con);
+            SqlDataAdapter data = new SqlDataAdapter("Select * from users where login = '" + userData.Username + "' or email = '" + userData.Email + "'", con);
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
             if (dataTable.Rows.Count > 0)
