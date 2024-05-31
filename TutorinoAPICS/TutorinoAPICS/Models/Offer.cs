@@ -17,23 +17,8 @@
         public string description { get; set; }
     }
 
-    public class OfferSubject
+    public class Offers
     {
-        public int subjectID { get; set; }
-    }
-
-    public class OfferID
-    {
-        public int subjectID { set; get; }
-        public int userID { set; get; }
-    }
-
-    public class OfferUID
-    {
-        public int userID { set; get; }
-    }
-
-    public class OfferIDD {
-        public int offerID { get; set; }
+        public string SubjectName {get;set;}   
     }
 }

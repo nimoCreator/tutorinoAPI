@@ -18,13 +18,45 @@ namespace TutorinoAPICS.Controllers
             this.configuration = configuration;
         }
 
-        //In progress, Code 100 - No offers
         [HttpGet]
         [Route("getAllOffers")]
-        public String GetOffers()
+        public String GetOffers(Offers offerDesc)
         {
+            int choosenSubject;
+            switch(offerDesc.SubjectName){
+                case "math":
+                    choosenSubject = 0;
+                    break;
+                case "phys":
+                    choosenSubject = 1;
+                    break;
+                case "chem":
+                    choosenSubject = 2;
+                    break;
+                case "bio":
+                    choosenSubject = 3;
+                    break;
+                case "hist":
+                    choosenSubject = 4;
+                    break;
+                case "geo":
+                    choosenSubject = 5;
+                    break;
+                case "eng":
+                    choosenSubject = 6;
+                    break;
+                default:
+                    choosenSubject = 7;
+                    break;
+            }
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlDataAdapter data = new SqlDataAdapter("Select * from offers", con);
+            SqlDataAdapter data;
+            if(choosenSubject == 7){
+                data = new SqlDataAdapter("Select * from offers", con);
+            }
+            else{
+                data = new SqlDataAdapter("Select * from offers where sid ="+choosenSubject, con);
+            }
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
             List<Offer> offers = new List<Offer>();
@@ -49,7 +81,6 @@ namespace TutorinoAPICS.Controllers
             }
         }
 
-        //Codes 0 - Data added successfully, 100 - Other Error, 101 - User or Subject are not correct
         [HttpPost]
         [Route("addOffer")]
         public String AddOffer(OfferAdded newOffer)
@@ -75,79 +106,10 @@ namespace TutorinoAPICS.Controllers
                 return JsonConvert.SerializeObject(new Response());
             }
         }
-
-        [HttpPost]
-        [Route("editOffer")]
-        public String EditOffer(Offer offer)
-        {
-            
-        }
-
-        [HttpPost]
-        [Route("deleteOffer")]
-        public String DeleteOffer(OfferIDD offer)
-        {
-            
-        }
-
-        [HttpGet]
-        [Route("getOffersByUserId")]
-        public string GetOffersByUserId(OfferUID offer)
-        {
-            
-        }
-
-        [HttpGet]
-        [Route("getOffersBySubjectId")]
-        public string GetOffersBySubjectId(OfferSubject subject)
-        {
-
-        }
-
-        [HttpGet]
-        [Route("getOffersByUIdAndSId")]
-        public string GetOffersByUIdAndSId(OfferID offer)
-        {
-            using (SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon")))
-            {
-                string query = "SELECT * FROM offers WHERE kuid = @userId AND sid = @subjectId";
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@userId", offer.userID);
-                    cmd.Parameters.AddWithValue("@subjectId", offer.subjectID);
-
-                    SqlDataAdapter data = new SqlDataAdapter(cmd);
-                    DataTable dataTable = new DataTable();
-                    data.Fill(dataTable);
-                    List<Offer> offers = new List<Offer>();
-
-                    if (dataTable.Rows.Count > 0)
-                    {
-                        foreach (DataRow row in dataTable.Rows)
-                        {
-                            Offer ofr = new Offer
-                 
-                            {
-                                id = Convert.ToInt32(row["oid"]),
-                                userID = Convert.ToInt32(row["kuid"]),
-                                subjectID = Convert.ToInt32(row["sid"]),
-                                price = Convert.ToDouble(row["price"]),
-                                description = Convert.ToString(row["desc"])
-                            };
-                            offers.Add(ofr);
-                        }
-                    }
-
-                    if (offers.Count > 0)
-                    {
-                        return JsonConvert.SerializeObject(offers);
-                    }
-                    else
-                    {
-                        return JsonConvert.SerializeObject(new Response(100, "No offers found for the specified user ID and subject ID"));
-                    }
-                }
-            }
-        }
     }
+        
+
+
+
+        
 }
