@@ -106,10 +106,28 @@ namespace TutorinoAPICS.Controllers
                 return JsonConvert.SerializeObject(new Response());
             }
         }
-    }
+    
         
-
-
-
-        
+        [HttpGet]
+        public String GetOffer(OfferPrint offerID){
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
+            SqlDataAdapter data = new SqlDataAdapter("Select * from offers where id="+offerID.id, con);
+            DataTable dataTable = new DataTable();
+            data.Fill(dataTable);
+            OfferInfo offer = new OfferInfo();
+            if (dataTable.Rows.Count > 0)
+            {  
+                offer.id = Convert.ToInt32(dataTable.Rows[0]["oid"]);
+                offer.kuid = Convert.ToInt32(dataTable.Rows[0]["kuid"]);
+                offer.sid = Convert.ToInt32(dataTable.Rows[0]["sid"]);
+                offer.price = Convert.ToDouble(dataTable.Rows[0]["oid"]);
+                offer.desc = Convert.ToString(dataTable.Rows[0]["desc"]);
+                return JsonConvert.SerializeObject(offer);
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new Response(100,"No data found"));
+            }
+        }
+    }     
 }

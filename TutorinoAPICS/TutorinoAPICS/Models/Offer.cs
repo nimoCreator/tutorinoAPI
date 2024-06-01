@@ -21,4 +21,16 @@
     {
         public string SubjectName {get;set;}   
     }
+
+    public class OfferInfo{
+        public int id {get;set;}
+        public int kuid {get;set;}
+        public int sid {get;set;}
+        public double price {get;set;}
+        public String desc {get;set;}
+    }
+
+    public class OfferPrint{
+        public int id {get;set;}
+    }
 }
