@@ -162,5 +162,30 @@ namespace TutorinoAPICS.Controllers
                 return JsonConvert.SerializeObject(new Response());
             }
         }   
+
+        [HttpPost]
+        [Route("editProfile")]
+        public String editProfile(UserEdit user){
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
+            SqlCommand cmd = new SqlCommand("Update users Set birthdate=" + user.birthdate + ",pfp=" + user.pfp + " Where uuid=" + user.userID, con);
+            con.Open();
+            int i;
+            try
+            {
+                i = cmd.ExecuteNonQuery();
+            } catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new Response(102, "Internal Error"));
+            }
+            con.Close();
+            if (i > 0)
+            {
+                return JsonConvert.SerializeObject(new Response(0, "Data Edited"));
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new Response());
+            }
+        }
     }
 }

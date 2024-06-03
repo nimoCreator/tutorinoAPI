@@ -29,4 +29,11 @@
         public int userID {get; set;}
         public String AccountType {get;set;}
     }
+
+    public class UserEdit
+    {
+        public int userID {get;set;}
+        public DateTime birthdate {get;set;}
+        public String pfp {get;set;}
+    }
 }
