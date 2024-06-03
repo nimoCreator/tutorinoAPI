@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
 using System.Data.SqlClient;
-using System.Reflection.Metadata.Ecma335;
 using TutorinoAPICS.Models;
 
 namespace TutorinoAPICS.Controllers
@@ -18,7 +17,6 @@ namespace TutorinoAPICS.Controllers
             this.configuration = configuration;
         }
 
-        //Test API to retrieve data about users in database
         [HttpGet]
         [Route("getAllUsers")]
         public String GetUsers()
@@ -50,7 +48,6 @@ namespace TutorinoAPICS.Controllers
             }
         }
 
-        //Response codes: 0 - User Added to Database, 102 - User with given mail or login exists in database, 100 - other error
         [HttpPost]
         [Route("addUser")]
         public String AddUser(UserAdded newUser)
@@ -94,7 +91,6 @@ namespace TutorinoAPICS.Controllers
             }
         }
 
-        //Status codes: 0 - Gives access, provided data are correct. 101 - Wrong Password given. 100 - No user with given mail or login in database.
         [HttpPost]
         [Route("loginUser")]
         public String LogUser(UserLogin userData)
