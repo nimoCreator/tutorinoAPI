@@ -163,7 +163,10 @@ namespace TutorinoAPICS.Controllers
         [Route("editProfile")]
         public String editProfile(UserEdit user){
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlCommand cmd = new SqlCommand("Update users Set birthdate=" + user.birthdate + ",pfp=" + user.pfp + " Where uuid=" + user.userID, con);
+            SqlCommand cmd = new SqlCommand("Update users Set birthdate=@birthdate,pfp=@pfp Where uuid=@uuid", con);
+            cmd.Parameters.Add("@birthdate", SqlDbType.DateTime).Value = user.birthdate;
+            cmd.Parameters.Add("@pfp", SqlDbType.VarChar).Value = user.pfp;
+            cmd.Parameters.Add("@uuid", SqlDbType.Int).Value = user.userID;
             con.Open();
             int i;
             try
