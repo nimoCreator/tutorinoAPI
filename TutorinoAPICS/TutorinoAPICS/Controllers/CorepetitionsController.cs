@@ -18,8 +18,8 @@ namespace TutorinoAPICS.Controllers
         }
 
         [HttpGet]
-        [Route("getTrans")]
-        public String getTrans()
+        [Route("getAllComps")]
+        public String getAllCorepetitions()
         {
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
             SqlDataAdapter data = new SqlDataAdapter("Select * from corepetitions", con);
@@ -57,6 +57,45 @@ namespace TutorinoAPICS.Controllers
             if (list.Count > 0)
             {
                 return JsonConvert.SerializeObject(list);
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new Response());
+            }
+        }
+
+        [HttpGet]
+        [Route("getCorepetition")]
+        public String getCorepetition(GetCorepet corp)
+        {
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
+            SqlDataAdapter data = new SqlDataAdapter("Select * from corepetitions where zuid=" + corp.zuid, con);
+            DataTable dataTable = new DataTable();
+            data.Fill(dataTable);
+            if (dataTable.Rows.Count > 0)
+            {
+                    Corepetitions core = new Corepetitions();
+                    core.zuid = Convert.ToInt32(dataTable.Rows[0]["zuid"]);
+                    core.teacher = Convert.ToInt32(dataTable.Rows[0]["teacher"]);
+                    core.pupil = Convert.ToInt32(dataTable.Rows[0]["pupil"]);
+                    core.subject = Convert.ToInt32(dataTable.Rows[0]["subject"]);
+                    core.level = Convert.ToInt32(dataTable.Rows[0]["level"]);
+                    core.status = Convert.ToString(dataTable.Rows[0]["status"]);
+                    core.start = Convert.ToDateTime(dataTable.Rows[0]["start"]);
+                    core.end = Convert.ToDateTime(dataTable.Rows[0]["end"]);
+                    core.time = Convert.ToInt32(dataTable.Rows[0]["time"]);
+                    core.price = Convert.ToDouble(dataTable.Rows[0]["price"]);
+                    core.currency = Convert.ToString(dataTable.Rows[0]["currency"]);
+                    core.form = Convert.ToChar(dataTable.Rows[0]["form"]);
+                    core.meet_link = Convert.ToString(dataTable.Rows[0]["meet_link"]);
+                    core.table_link = Convert.ToString(dataTable.Rows[0]["table_link"]);
+                    core.localization = Convert.ToString(dataTable.Rows[0]["localization"]);
+                    core.accepted_o = Convert.ToBoolean(dataTable.Rows[0]["accepted_o"]);
+                    core.accepted_k = Convert.ToBoolean(dataTable.Rows[0]["accepted_k"]);
+                    core.paid_in_cash = Convert.ToBoolean(dataTable.Rows[0]["paid_in_cash"]);
+                    core.trainsaction_id = Convert.ToInt32(dataTable.Rows[0]["trainsaction_id"]);
+                    core.convo = Convert.ToInt32(dataTable.Rows[0]["convo"]);
+                    return JsonConvert.SerializeObject(core);
             }
             else
             {
