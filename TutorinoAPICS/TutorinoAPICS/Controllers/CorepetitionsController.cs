@@ -107,7 +107,7 @@ namespace TutorinoAPICS.Controllers
         [Route("newCorepetition")]
         public String newTrans(NewCopepetition core){
             int choosenSubject;
-            switch(offerDesc.SubjectName){
+            switch(core.subject){
                 case "math":
                     choosenSubject = 0;
                     break;
@@ -176,9 +176,9 @@ namespace TutorinoAPICS.Controllers
 
         [HttpPost]
         [Route("editCorepetition")]
-        public String newTrans(NewCopepetition core){
+        public String editCorepetition(EditCopepetition core){
             int choosenSubject;
-            switch(offerDesc.SubjectName){
+            switch(core.subject){
                 case "math":
                     choosenSubject = 0;
                     break;
@@ -205,7 +205,7 @@ namespace TutorinoAPICS.Controllers
                     break;
             }
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlCommand cmd = new SqlCommand("Update corepetitions Set teacher=@1,pupil=@2,subject=@3,level=@4,status=@5,start=@6,end=@7,time=@8,price=@9,currency=@10,form=@11,meet_link=@12,table_link=@13,localization=@14,accepted_o=@15,accepted_k=@16,paid_in_cash=@17,transaction_id=@18,convo=@19) Where uuid=" + user.userID, con);
+            SqlCommand cmd = new SqlCommand("Update corepetitions Set teacher=@1,pupil=@2,subject=@3,level=@4,status=@5,start=@6,end=@7,time=@8,price=@9,currency=@10,form=@11,meet_link=@12,table_link=@13,localization=@14,accepted_o=@15,accepted_k=@16,paid_in_cash=@17,transaction_id=@18,convo=@19 Where zuid=" + core.zuid, con);
             cmd.Parameters.Add("@1", SqlDbType.Int).Value =core.teacher;
             cmd.Parameters.Add("@2", SqlDbType.Int).Value = core.pupil;
             cmd.Parameters.Add("@3", SqlDbType.Int).Value =choosenSubject;
