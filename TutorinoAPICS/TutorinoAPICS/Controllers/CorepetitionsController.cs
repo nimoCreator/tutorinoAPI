@@ -49,7 +49,7 @@ namespace TutorinoAPICS.Controllers
                     core.accepted_o = Convert.ToBoolean(dataTable.Rows[i]["accepted_o"]);
                     core.accepted_k = Convert.ToBoolean(dataTable.Rows[i]["accepted_k"]);
                     core.paid_in_cash = Convert.ToBoolean(dataTable.Rows[i]["paid_in_cash"]);
-                    core.trainsaction_id = Convert.ToInt32(dataTable.Rows[i]["trainsaction_id"]);
+                    core.trainsaction_id = Convert.ToInt32(dataTable.Rows[i]["transaction_id"]);
                     core.convo = Convert.ToInt32(dataTable.Rows[i]["convo"]);
                     list.Add(core);
                 }
@@ -93,9 +93,53 @@ namespace TutorinoAPICS.Controllers
                     core.accepted_o = Convert.ToBoolean(dataTable.Rows[0]["accepted_o"]);
                     core.accepted_k = Convert.ToBoolean(dataTable.Rows[0]["accepted_k"]);
                     core.paid_in_cash = Convert.ToBoolean(dataTable.Rows[0]["paid_in_cash"]);
-                    core.trainsaction_id = Convert.ToInt32(dataTable.Rows[0]["trainsaction_id"]);
+                    core.trainsaction_id = Convert.ToInt32(dataTable.Rows[0]["transaction_id"]);
                     core.convo = Convert.ToInt32(dataTable.Rows[0]["convo"]);
                     return JsonConvert.SerializeObject(core);
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new Response());
+            }
+        }
+
+        [HttpPost]
+        [Route("newCorepetition")]
+        public String newTrans(NewCopepetition core){
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
+            SqlCommand cmd = new SqlCommand("Insert into corepetitions(teacher,pupil,subject,level,status,start,end,time,price,currency,form,meet_link,table_link,localization,accepted_o,accepted_k,paid_in_cash,transaction_id) values(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19)", con);
+            cmd.Parameters.Add("@1", SqlDbType.Int).Value =core.teacher;
+            cmd.Parameters.Add("@2", SqlDbType.Int).Value = core.pupil;
+            cmd.Parameters.Add("@3", SqlDbType.Int).Value =core.subject;
+            cmd.Parameters.Add("@4", SqlDbType.Int).Value =core.level;
+            cmd.Parameters.Add("@5", SqlDbType.VarChar).Value =core.status;
+            cmd.Parameters.Add("@6", SqlDbType.DateTime).Value =core.start;
+            cmd.Parameters.Add("@7", SqlDbType.DateTime).Value =core.end;
+            cmd.Parameters.Add("@8", SqlDbType.Int).Value =core.time;
+            cmd.Parameters.Add("@9", SqlDbType.Float).Value =core.price;
+            cmd.Parameters.Add("@10", SqlDbType.VarChar).Value =core.currency;
+            cmd.Parameters.Add("@11", SqlDbType.Char).Value =core.form;
+            cmd.Parameters.Add("@12", SqlDbType.VarChar).Value =core.meet_link;
+            cmd.Parameters.Add("@13", SqlDbType.VarChar).Value =core.table_link;
+            cmd.Parameters.Add("@14", SqlDbType.VarChar).Value =core.localization;
+            cmd.Parameters.Add("@15", SqlDbType.Bit).Value =core.accepted_o;
+            cmd.Parameters.Add("@16", SqlDbType.Bit).Value =core.accepted_k;
+            cmd.Parameters.Add("@17", SqlDbType.Bit).Value =core.paid_in_cash;
+            cmd.Parameters.Add("@18", SqlDbType.Int).Value =core.trainsaction_id;
+            cmd.Parameters.Add("@19", SqlDbType.Int).Value =core.convo;
+            con.Open();
+            int i;
+            try
+            {
+                i = cmd.ExecuteNonQuery();
+            } catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new Response(102, "Internal Error"));
+            }
+            con.Close();
+            if (i > 0)
+            {
+                return JsonConvert.SerializeObject(new Response(0, "Corepetition added"));
             }
             else
             {
