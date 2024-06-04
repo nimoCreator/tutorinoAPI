@@ -133,5 +133,31 @@ namespace TutorinoAPICS.Controllers
                 return JsonConvert.SerializeObject(new Response(100,"No Transactions for this offer"));
             }
         }
+
+        [HttpPost]
+        [Route("DeleteTransaction")]
+        public String deleteTransaction(DeleteTrans tran){
+            SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
+            SqlCommand cmd = new SqlCommand("Delete from transactions Where tid=@uuid", con);
+            cmd.Parameters.Add("@uuid", SqlDbType.Int).Value = tran.tid;
+            con.Open();
+            int i;
+            try
+            {
+                i = cmd.ExecuteNonQuery();
+            } catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new Response(102, "Internal Error"));
+            }
+            con.Close();
+            if (i > 0)
+            {
+                return JsonConvert.SerializeObject(new Response(0, "Transaction Deleted"));
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new Response());
+            }
+        }
     }
 }

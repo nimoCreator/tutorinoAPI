@@ -33,7 +33,7 @@
     {
         public int teacher {get;set;}
         public int pupil {get;set;}
-        public int subject {get;set;}
+        public String subject {get;set;}
         public int level {get;set;}
         public String status {get;set;}
         public DateTime start {get;set;}

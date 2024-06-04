@@ -32,4 +32,9 @@
         public String currency {get;set;}
         public String details {get;set;}
     }
+
+    public class DeleteTrans
+    {
+        public int tid {get;set;}
+    }
 }
