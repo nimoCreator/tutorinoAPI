@@ -18,7 +18,7 @@ namespace TutorinoAPICS.Controllers
             this.configuration = configuration;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("getAllOffers")]
         public String GetOffers(Offers offerDesc)
         {
@@ -108,7 +108,7 @@ namespace TutorinoAPICS.Controllers
         }
     
         
-        [HttpGet]
+        [HttpPost]
         public String GetOffer(OfferPrint offerID){
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
             SqlDataAdapter data = new SqlDataAdapter("Select * from offers where id="+offerID.id, con);
