@@ -76,7 +76,7 @@ namespace TutorinoAPICS.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("getTrans")]
         public String getTrans(ListTrans trans){
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
@@ -109,11 +109,11 @@ namespace TutorinoAPICS.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("getLastTrans")]
         public String getLastTrans(ListTrans trans){
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlDataAdapter data = new SqlDataAdapter("SELECT * from transactions WHERE ouid=" + trans.ouid + " ORDER BY tid DESC LIMIT 1", con);
+            SqlDataAdapter data = new SqlDataAdapter("SELECT TOP 1 * FROM transactions WHERE ouid =" + trans.ouid +" ORDER BY tid DESC", con);
             PrintTrans t = new PrintTrans();
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);

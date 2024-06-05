@@ -64,7 +64,7 @@ namespace TutorinoAPICS.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("getCorepetition")]
         public String getCorepetition(GetCorepet corp)
         {
