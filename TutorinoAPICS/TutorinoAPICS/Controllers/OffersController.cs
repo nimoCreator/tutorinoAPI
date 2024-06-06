@@ -112,7 +112,7 @@ namespace TutorinoAPICS.Controllers
         [Route("getOffer")]
         public String GetOffer(OfferPrint offerID){
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlDataAdapter data = new SqlDataAdapter("Select * from offers where id="+offerID.id, con);
+            SqlDataAdapter data = new SqlDataAdapter("Select * from offers where oid="+offerID.id, con);
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
             OfferInfo offer = new OfferInfo();
