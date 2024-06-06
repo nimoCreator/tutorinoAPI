@@ -75,12 +75,13 @@ namespace TutorinoAPICS.Controllers
             SqlDataAdapter data = new SqlDataAdapter("Select * from available where user_uuid=" + aval.user_uuid, con);
             DataTable dataTable = new DataTable();
             data.Fill(dataTable);
-            List<Available> a = new List<Available>();
+            List<AvailableFull> a = new List<AvailableFull>();
             if (dataTable.Rows.Count > 0)
             {
                 for (int i = 0; i < dataTable.Rows.Count; i++)
                 {
-                    Available newA = new Available();
+                    AvailableFull newA = new AvailableFull();
+                    newA.aid = Convert.ToInt32(dataTable.Rows[i]["aid"]);
                     newA.weekday = Convert.ToInt32(dataTable.Rows[i]["weekday"]);
                     newA.begin = Convert.ToInt32(dataTable.Rows[i]["begin"]);
                     newA.end = Convert.ToInt32(dataTable.Rows[i]["end"]);
