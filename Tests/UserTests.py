@@ -3,7 +3,7 @@ import requests
 import json
 
 class TestUsersController(unittest.TestCase):
-    BASE_URL = "https://tutorino.ddns.net:888/Users" # zmiana na lokalne?
+    BASE_URL = "https://tutorino.ddns.net:888/Users"
 
     def setUp(self) -> None:
          return super().setUp()
@@ -11,14 +11,14 @@ class TestUsersController(unittest.TestCase):
     def tearDown(self) -> None:
          return super().tearDown()
 
-    def test_get_all_offers(self):
+    def test_get_all_users(self):
         response = requests.get(f"{self.BASE_URL}/getAllUsers", verify=False)
         self.assertEqual(response.status_code, 200,"wrong response code = {}".format(response.status_code))
         try:
             json_data = response.json()
+            self.assertIsInstance(json_data, list, f"Response is not a list: {json_data}")
         except ValueError:
             self.fail(f"Response is not a valid JSON: {response.text}")
-        self.assertIsInstance(json_data, list, f"Response is not a list: {json_data}")
     
     def test_add_user_new(self):
             new_user = {
@@ -52,12 +52,11 @@ class TestUsersController(unittest.TestCase):
                 self.assertEqual(response.status_code, 200, f"Unexpected status code: {response.status_code}")
                 try:
                     json_data = response.json()
+                    self.assertIsInstance(json_data, dict, f"Response is not a dictionary: {json_data}")
+                    self.assertEqual(json_data['StatusCode'], 102, f"Unexpected StatusCode in json response: {json_data['StatusCode']}")
+                    self.assertEqual(json_data['ErrorMessage'], 'User Exists', f"Unexpected ErrorMessage: {json_data['ErrorMessage']}")
                 except ValueError:
                     self.fail(f"Response is not a valid JSON: {response.text}")
-
-                self.assertIsInstance(json_data, dict, f"Response is not a dictionary: {json_data}")
-                self.assertEqual(json_data['StatusCode'], 102, f"Unexpected StatusCode in json response: {json_data['StatusCode']}")
-                self.assertEqual(json_data['ErrorMessage'], 'User Exists', f"Unexpected ErrorMessage: {json_data['ErrorMessage']}")
 
     def test_login_user_correct_password(self):
         user_data = {
