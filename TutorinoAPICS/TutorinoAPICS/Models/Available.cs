@@ -15,4 +15,9 @@
         public int aid {get;set;}
         public int user_uuid {get;set;}
     }
+
+    public class AvalID
+    {
+        public int user_uuid { get; set; }
+    }
 }
