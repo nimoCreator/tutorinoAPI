@@ -21,7 +21,7 @@ namespace TutorinoAPICS.Controllers
     [Route("AddAvailable")]
     public String addAval(Available aval){
         SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-        SqlCommand cmd = new SqlCommand("Insert into available(user_uuid,weekday,\"begin\",end,valid_from,valid_until) values('" + aval.user_uuid + "','" + aval.weekday + "','" + aval.begin + "','" + aval.end + "','" + aval.valid_from + "','" + aval.valid_until + "')", con);
+        SqlCommand cmd = new SqlCommand("Insert into available(user_uuid,weekday,\"begin\",\"end\",valid_from,valid_until) values('" + aval.user_uuid + "','" + aval.weekday + "','" + aval.begin + "','" + aval.end + "','" + aval.valid_from + "','" + aval.valid_until + "')", con);
         con.Open();
         int i;
         try
