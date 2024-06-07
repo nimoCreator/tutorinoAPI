@@ -92,7 +92,14 @@ namespace TutorinoAPICS.Controllers
                     t.tid = Convert.ToInt32(dataTable.Rows[i]["tid"]);
                     t.status = Convert.ToString(dataTable.Rows[i]["statu"]);
                     t.conf_date = Convert.ToDateTime(dataTable.Rows[i]["trans_date"]);
-                    t.trans_date = Convert.ToDateTime(dataTable.Rows[i]["trans_confirmed"]);
+                    try
+                    {
+                        t.conf_date = Convert.ToDateTime(dataTable.Rows[0]["trans_confirmed"]);
+                    }
+                    catch (Exception e)
+                    {
+                        t.conf_date = null;
+                    }
                     t.value = Convert.ToDouble(dataTable.Rows[i]["value"]);
                     t.currency = Convert.ToString(dataTable.Rows[i]["currency"]);
                     t.status = Convert.ToString(dataTable.Rows[i]["details"]);
@@ -121,8 +128,14 @@ namespace TutorinoAPICS.Controllers
             {
                 t.tid = Convert.ToInt32(dataTable.Rows[0]["tid"]);
                 t.status = Convert.ToString(dataTable.Rows[0]["statu"]);
-                t.conf_date = Convert.ToDateTime(dataTable.Rows[0]["trans_date"]);
-                t.trans_date = Convert.ToDateTime(dataTable.Rows[0]["trans_confirmed"]);
+                t.trans_date = Convert.ToDateTime(dataTable.Rows[0]["trans_date"]);
+                try
+                {
+                    t.conf_date = Convert.ToDateTime(dataTable.Rows[0]["trans_confirmed"]);
+                } catch(Exception e)
+                {
+                    t.conf_date = null;
+                }
                 t.value = Convert.ToDouble(dataTable.Rows[0]["value"]);
                 t.currency = Convert.ToString(dataTable.Rows[0]["currency"]);
                 t.status = Convert.ToString(dataTable.Rows[0]["details"]);

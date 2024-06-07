@@ -26,7 +26,7 @@
     {
         public int tid {get;set;}
         public String status {get;set;}
-        public DateTime conf_date {get;set;}
+        public DateTime? conf_date {get;set;}
         public DateTime trans_date {get;set;}
         public double value {get;set;}
         public String currency {get;set;}
