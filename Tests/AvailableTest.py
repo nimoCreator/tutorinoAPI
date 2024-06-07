@@ -29,31 +29,34 @@ class TestAvailableController(unittest.TestCase):
         except ValueError:
             self.fail(f"Response is not a valid JSON: {response.text}")
     
-    # def test_edit_available(self):
-    #     aval_change_data = {
-    #         "aid": i,
-    #         "user_uuid": 10
-    #     }
-    #     response = requests.post(f"{self.BASE_URL}/editAval", json=aval_change_data, verify=False)
-    #     self.assertEqual(response.status_code, 200, f"Wrong response code: {response.status_code}")
-    #     try:
-    #         json_data = response.json()
-    #         self.assertEqual(json_data['StatusCode'], 0, f"Unexpected StatusCode in json response: {json_data['StatusCode']}")
-    #         self.assertEqual(json_data['ErrorMessage'], "Data Edited", f"Unexpected ErrorMessage: {json_data['ErrorMessage']}")
-    #     except ValueError:
-    #         self.fail(f"Response is not a valid JSON: {response.text}")
+    def test_edit_available(self):
+        aval_change_data = {
+            "aid": 4,
+            "user_uuid": 10
+        }
+        response = requests.post(f"{self.BASE_URL}/editAval", json=aval_change_data, verify=False)
+        self.assertEqual(response.status_code, 200, f"Wrong response code: {response.status_code}")
+        try:
+            json_data = response.json()
+            self.assertEqual(json_data['StatusCode'], 0, f"Unexpected StatusCode in json response: {json_data['StatusCode']}")
+            self.assertEqual(json_data['ErrorMessage'], "Data Edited", f"Unexpected ErrorMessage: {json_data['ErrorMessage']}")
+        except ValueError:
+            self.fail(f"Response is not a valid JSON: {response.text}")
     
     def test_get_available(self):
         uuid = {
             "user_uuid" : 9
         }
+        required_fields = ["aid", "user_uuid", "weekday", "begin", "end", "valid_from", "valid_until"]
         response = requests.post(f"{self.BASE_URL}/getAval", json=uuid, verify=False)
         self.assertEqual(response.status_code, 200, f"Wrong response code: {response.status_code}")
         try:
             json_data = response.json()
             self.assertIsInstance(json_data, list, f"Response is not a list: {json_data}")
-            self.assertEqual(json_data['StatusCode'], 0, f"Unexpected StatusCode in json response: {json_data['StatusCode']}")
-            self.assertEqual(json_data['ErrorMessage'], 'Data added', f"Unexpected ErrorMessage: {json_data['ErrorMessage']}")
+            self.assertTrue(len(json_data) > 0, "Response list is empty")
+            for item in json_data:
+                for field in required_fields:
+                    self.assertIn(field, item, f"Field '{field}' is missing in response item")
         except ValueError:
             self.fail(f"Response is not a valid JSON: {response.text}")
 
