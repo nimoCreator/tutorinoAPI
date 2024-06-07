@@ -50,7 +50,6 @@ namespace TutorinoAPICS.Controllers
                     core.accepted_k = Convert.ToBoolean(dataTable.Rows[i]["accepted_k"]);
                     core.paid_in_cash = Convert.ToBoolean(dataTable.Rows[i]["paid_in_cash"]);
                     core.trainsaction_id = Convert.ToInt32(dataTable.Rows[i]["transaction_id"]);
-                    core.convo = Convert.ToInt32(dataTable.Rows[i]["convo"]);
                     list.Add(core);
                 }
             }
@@ -94,7 +93,6 @@ namespace TutorinoAPICS.Controllers
                     core.accepted_k = Convert.ToBoolean(dataTable.Rows[0]["accepted_k"]);
                     core.paid_in_cash = Convert.ToBoolean(dataTable.Rows[0]["paid_in_cash"]);
                     core.trainsaction_id = Convert.ToInt32(dataTable.Rows[0]["transaction_id"]);
-                    core.convo = Convert.ToInt32(dataTable.Rows[0]["convo"]);
                     return JsonConvert.SerializeObject(core);
             }
             else
@@ -105,7 +103,7 @@ namespace TutorinoAPICS.Controllers
 
         [HttpPost]
         [Route("newCorepetition")]
-        public String newTrans(NewCopepetition core){
+        public String newCorepet(NewCopepetition core){
             int choosenSubject;
             switch(core.subject){
                 case "math":
@@ -130,11 +128,10 @@ namespace TutorinoAPICS.Controllers
                     choosenSubject = 6;
                     break;
                 default:
-                    choosenSubject = 7;
-                    break;
+                    return JsonConvert.SerializeObject(new Response(105, "Wrong Subject Name"));
             }
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlCommand cmd = new SqlCommand("Insert into corepetitions(teacher,pupil,subject,level,status,start,end,time,price,currency,form,meet_link,table_link,localization,accepted_o,accepted_k,paid_in_cash,transaction_id) values(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19)", con);
+            SqlCommand cmd = new SqlCommand("Insert into corepetitions(teacher,pupil,subject,level,status,start,\"end\",time,price,currency,form,meet_link,table_link,localization,accepted_o,accepted_k,paid_in_cash,transaction_id,convo) values(@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19)", con);
             cmd.Parameters.Add("@1", SqlDbType.Int).Value =core.teacher;
             cmd.Parameters.Add("@2", SqlDbType.Int).Value = core.pupil;
             cmd.Parameters.Add("@3", SqlDbType.Int).Value =choosenSubject;
@@ -153,7 +150,7 @@ namespace TutorinoAPICS.Controllers
             cmd.Parameters.Add("@16", SqlDbType.Bit).Value =core.accepted_k;
             cmd.Parameters.Add("@17", SqlDbType.Bit).Value =core.paid_in_cash;
             cmd.Parameters.Add("@18", SqlDbType.Int).Value =core.trainsaction_id;
-            cmd.Parameters.Add("@19", SqlDbType.Int).Value =core.convo;
+            cmd.Parameters.Add("@19", SqlDbType.Int).Value = 0;
             con.Open();
             int i;
             try
@@ -161,7 +158,7 @@ namespace TutorinoAPICS.Controllers
                 i = cmd.ExecuteNonQuery();
             } catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new Response(102, "Internal Error"));
+                return JsonConvert.SerializeObject(new Response(102, "Wrong Teacher or Pupil ID"));
             }
             con.Close();
             if (i > 0)
@@ -201,11 +198,10 @@ namespace TutorinoAPICS.Controllers
                     choosenSubject = 6;
                     break;
                 default:
-                    choosenSubject = 7;
-                    break;
+                    return JsonConvert.SerializeObject(new Response(105, "Wrong Subject Name"));
             }
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlCommand cmd = new SqlCommand("Update corepetitions Set teacher=@1,pupil=@2,subject=@3,level=@4,status=@5,start=@6,end=@7,time=@8,price=@9,currency=@10,form=@11,meet_link=@12,table_link=@13,localization=@14,accepted_o=@15,accepted_k=@16,paid_in_cash=@17,transaction_id=@18,convo=@19 Where zuid=" + core.zuid, con);
+            SqlCommand cmd = new SqlCommand("Update corepetitions Set teacher=@1,pupil=@2,subject=@3,level=@4,status=@5,start=@6,\"end\"=@7,time=@8,price=@9,currency=@10,form=@11,meet_link=@12,table_link=@13,localization=@14,accepted_o=@15,accepted_k=@16,paid_in_cash=@17,transaction_id=@18 Where zuid=" + core.zuid, con);
             cmd.Parameters.Add("@1", SqlDbType.Int).Value =core.teacher;
             cmd.Parameters.Add("@2", SqlDbType.Int).Value = core.pupil;
             cmd.Parameters.Add("@3", SqlDbType.Int).Value =choosenSubject;
@@ -224,7 +220,6 @@ namespace TutorinoAPICS.Controllers
             cmd.Parameters.Add("@16", SqlDbType.Bit).Value =core.accepted_k;
             cmd.Parameters.Add("@17", SqlDbType.Bit).Value =core.paid_in_cash;
             cmd.Parameters.Add("@18", SqlDbType.Int).Value =core.trainsaction_id;
-            cmd.Parameters.Add("@19", SqlDbType.Int).Value =core.convo;
             con.Open();
             int i;
             try
@@ -232,7 +227,7 @@ namespace TutorinoAPICS.Controllers
                 i = cmd.ExecuteNonQuery();
             } catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new Response(102, "Internal Error"));
+                return JsonConvert.SerializeObject(new Response(102, "Wrong Teacher or Pupil ID"));
             }
             con.Close();
             if (i > 0)

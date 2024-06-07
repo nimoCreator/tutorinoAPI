@@ -21,7 +21,6 @@
         public bool accepted_k {get;set;}
         public bool paid_in_cash {get;set;}
         public int trainsaction_id {get;set;}
-        public int convo {get;set;}
     }
 
     public class GetCorepet
@@ -49,7 +48,6 @@
         public bool accepted_k {get;set;}
         public bool paid_in_cash {get;set;}
         public int trainsaction_id {get;set;}
-        public int convo {get;set;}
     }
 
     public class EditCopepetition
@@ -73,6 +71,5 @@
         public bool accepted_k { get; set; }
         public bool paid_in_cash { get; set; }
         public int trainsaction_id { get; set; }
-        public int convo { get; set; }
     }
 }
