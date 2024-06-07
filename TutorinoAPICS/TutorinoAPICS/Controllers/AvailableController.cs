@@ -46,7 +46,7 @@ namespace TutorinoAPICS.Controllers
     [Route("editAval")]
     public String editAval(AvailableChange aval){
         SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-        SqlCommand cmd = new SqlCommand("Update available Set user_uuid=" + aval.user_uuid +" Where uuid=" + aval.aid, con);
+        SqlCommand cmd = new SqlCommand("Update available Set user_uuid=" + aval.user_uuid +" Where aid=" + aval.aid, con);
         con.Open();
         int i;
         try
