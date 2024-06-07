@@ -52,7 +52,7 @@ namespace TutorinoAPICS.Controllers
         [Route("updateTrans")]
         public String updateTrans(EditTrans trans){
             SqlConnection con = new SqlConnection(configuration.GetConnectionString("AppCon").ToString());
-            SqlCommand cmd = new SqlCommand("Update transactions Set trans_confirmed=@conf_date,status=@status Where tid=@tid", con);
+            SqlCommand cmd = new SqlCommand("Update transactions Set trans_confirmed=@conf_date,statu=@status Where tid=@tid", con);
             cmd.Parameters.Add("@conf_date", SqlDbType.DateTime).Value = trans.conf_date;
             cmd.Parameters.Add("@status", SqlDbType.VarChar).Value = trans.status;
             cmd.Parameters.Add("@tid", SqlDbType.Int).Value = trans.tid;
