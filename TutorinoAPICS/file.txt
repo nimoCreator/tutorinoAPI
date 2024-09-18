@@ -1,0 +1,70 @@
+Folder PATH listing for volume Apps
+Volume serial number is A696─3B2D
+P:.
+│   file.txt
+│   TutorinoAPICS.sln
+│   
+├───TutorinoAPICS
+│   │   App.Config
+│   │   appsettings.Development.json
+│   │   appsettings.json
+│   │   Program.cs
+│   │   TutorinoAPICS.csproj
+│   │   TutorinoAPICS.csproj.user
+│   │   TutorinoAPICS.http
+│   │   WeatherForecast.cs
+│   │   web1.config
+│   │   
+│   ├───.config
+│   │       dotnet─tools.json
+│   │       
+│   ├───.vscode
+│   │       settings.json
+│   │       
+│   ├───bin
+│   │   ├───Debug
+│   │       ├───net8.0
+│   ├───Controllers
+│   │       AvailableController.cs
+│   │       CorepetitionsController.cs
+│   │       OffersController.cs
+│   │       TransactionsController.cs
+│   │       UsersController.cs
+│   │       WeatherForecastController.cs
+│   │       
+│   ├───Models
+│   │       Available.cs
+│   │       Corepetitions.cs
+│   │       Offer.cs
+│   │       Response.cs
+│   │       Transaction.cs
+│   │       User.cs
+│   │       
+│   ├───obj
+│   │   │   project.assets.json
+│   │   │   project.nuget.cache
+│   │   │   TutorinoAPICS.csproj.nuget.dgspec.json
+│   │   │   TutorinoAPICS.csproj.nuget.g.props
+│   │   │   TutorinoAPICS.csproj.nuget.g.targets
+│   │   │   
+│   │   ├───Debug
+│   │       ├───net8.0
+│   │           │   .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+│   │           │   TutorinoAPICS.AssemblyInfo.cs
+│   │           │   TutorinoAPICS.AssemblyInfoInputs.cache
+│   │           │   TutorinoAPICS.assets.cache
+│   │           │   TutorinoAPICS.csproj.AssemblyReference.cache
+│   │           │   TutorinoAPICS.GeneratedMSBuildEditorConfig.editorconfig
+│   │           │   TutorinoAPICS.GlobalUsings.g.cs
+│   │           │   
+│   │           ├───ref
+│   │           ├───refint
+│   │           ├───staticwebassets
+│   ├───Properties
+│   │   │   launchSettings.json
+│   │   │   serviceDependencies.json
+│   │   │   serviceDependencies.TutorinoAPI ─ Web Deploy.json
+│   │   │   
+│   │   ├───ServiceDependencies
+│   │   │   ├───TutorinoAPI ─ Web Deploy
+│   │   │   │       profile.arm.json
